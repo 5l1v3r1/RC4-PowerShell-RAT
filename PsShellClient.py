@@ -2,9 +2,11 @@
 # Author: Mr.Un1k0d3r RingZer0 Team
 import sys
 import socket
+import time
 
 version = "1.0"
 buffer_size = 4096
+recv_timeout = 0.2
 
 def KSA(key):
     keylength = len(key)
@@ -40,6 +42,16 @@ def RC4(plaintext, key):
 		output = output + chr(ord(c) ^ keystream.next())
 	return output
 
+def recvall(conn, size):
+	buffer = ""
+	current_buffer_size = 4096
+	while size > 0:
+		if size < current_buffer_size:
+			current_buffer_size = size;
+		buffer += conn.recv(current_buffer_size)
+		time.sleep(recv_timeout)
+		size -= current_buffer_size
+	return buffer
 
 if __name__ == "__main__":
 	print "PS-RemoteShell Python Client v%s\nMr.Un1k0d3r RingZer0 Team\n\n" % version
@@ -63,8 +75,12 @@ if __name__ == "__main__":
 			
 			data = True
 			while data:
-				data = conn.recv(4096)
+				data = conn.recv(buffer_size)
 				data = RC4(data, key)
+				if data[:11] == "PACKETSIZE=":
+					time.sleep(recv_timeout)
+					data = recvall(conn, int(data[11:]))
+					data = RC4(data, key)
 				cmd = raw_input(data)
 				if cmd == "":
 					cmd = ";"

