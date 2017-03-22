@@ -90,7 +90,7 @@ function PS-RemoteShell {
 			$cmd = ([System.Text.Encoding]::ASCII).GetString($cmd, 0, $j)
 			
 			$cmd = $data + ";" + $cmd
-			$exec = (Invoke-Expression -Command $cmd 2>&1 | Out-String )
+			$exec = ([ScriptBlock]::Create($cmd).Invoke() | Out-String)
 			$data = ""
 			$exec  = $exec + "`n"
 			$errorMessage = ($error[0] | Out-String)
