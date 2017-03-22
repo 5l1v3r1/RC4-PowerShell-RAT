@@ -1,4 +1,4 @@
-# RC4-PowerShell-IEX
+# RC4-PowerShell-RAT
 Small powershell reverse shell using RC4 encryption
 
 # Usage
