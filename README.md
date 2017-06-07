@@ -1,5 +1,5 @@
 # RC4-PowerShell-RAT
-Small powershell reverse shell using RC4 encryption
+Simple powershell reverse shell using RC4 encryption for all the commands and payloads. PsShellClient.py only accept one client at the time. MultiPsShellClient.py accept up to 20 clients at the time.
 
 # Usage
 ```
