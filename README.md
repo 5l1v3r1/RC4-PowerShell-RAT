@@ -1,5 +1,5 @@
 # RC4-PowerShell-RAT
-Simple powershell reverse shell using RC4 encryption for all the commands and payloads. PsShellClient.py only accept one client at the time. MultiPsShellClient.py accept up to 20 clients at the time.
+Simple powershell reverse shell using RC4 encryption for all the commands and payloads. PsShellClient.py only accept one client at the time. MultiPsShellClient.py accept several clients at the time.
 
 # Usage
 ```
@@ -17,7 +17,7 @@ $ python PsShellClient.py 0.0.0.0 1111 test
 ```
 
 ```
-$ python MultiPsShellClient.py 127.0.0.1 8888 test
+$ python MultiPsShellClient.py 127.0.0.1 8888 test 20
 
 PS-RemoteShell Python Client v1.1
 Mr.Un1k0d3r RingZer0 Team
