@@ -15,6 +15,7 @@ buffer_size = 4096
 recv_timeout = 0.2
 
 sessions = {}
+max_session = 20
 
 class RC4:
 
@@ -53,7 +54,7 @@ class RC4:
 class Networking:
 			
 	def __init__(self):
-		for i in range(1, 21):
+		for i in range(1, max_session + 1):
 			session = {}
 			sessions["sess_" + str(i)] = {}
 			sessions["sess_" + str(i)]["conn"] = None
@@ -70,7 +71,7 @@ class Networking:
 		return buffer
 
 	def accept_connection(self, s):
-		s.listen(20)
+		s.listen(max_session)
 		while True:
 			conn, addr = s.accept()
 			session_id = self.add_new_connection(conn, "Callback from %s:%d" % (addr[0], addr[1]))
@@ -96,15 +97,16 @@ def show_help():
 	print "Help\n------\nlist\t\tList all sessions\ninteract id\tInteract with a session (Example: interact 1)\nbackground\tReturn to the main console\n"
 		
 if __name__ == "__main__":
-	print "PS-RemoteShell Python Client v%s\nMr.Un1k0d3r RingZer0 Team\n\n" % version
-	if len(sys.argv) < 4:
-		print "Usage: %s ip port key" % sys.argv[0]
+	print "Multi PS-RemoteShell Python Client v%s\nMr.Un1k0d3r RingZer0 Team\n\n" % version
+	if len(sys.argv) < 5:
+		print "Usage: %s ip port key number_of_session" % sys.argv[0]
 		exit(0)
 		
 	old = None
 	ip = sys.argv[1]
 	port = int(sys.argv[2])
 	rc4_key = sys.argv[3]
+	max_session = int(sys.argv[4])
 	network = Networking()
 	accept_loop = network.accept_connection
 	
@@ -112,6 +114,7 @@ if __name__ == "__main__":
 	s.bind((ip, port))
 
 	show_help()
+	print "[+] Setup to receive up to %d clients" % max_session
 	print "[*] Waiting for a connection...\n\n"
 	
 	thread = NetThread(accept_loop, s)
