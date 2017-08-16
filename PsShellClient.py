@@ -10,7 +10,7 @@ recv_timeout = 0.2
 logpath = time.strftime("%c") + ".log" 
 
 def log_command(command, action, path):
-	open(path, "a+").write("\n[%s] %s:\n--------------------------------------------\n%s" % (time.strftime("%c"), action, command))
+	open(path, "a+").write("\n[%s] %s:\n--------------------------------------------\n%s\n\n" % (time.strftime("%c"), action, command))
 
 def KSA(key):
     keylength = len(key)
