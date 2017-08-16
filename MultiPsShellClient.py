@@ -96,7 +96,7 @@ class NetThread(threading.Thread):
         self._target(*self._args)
 
 def log_command(command, action, path):
-	open(path, "a+").write("\n[%s] %s:\n--------------------------------------------\n%s" % (time.strftime("%c"), action, command))
+	open(path, "a+").write("\n[%s] %s:\n--------------------------------------------\n%s\n\n" % (time.strftime("%c"), action, command))
 		
 def show_help():
 	print "Help\n------\nlist\t\tList all sessions\ninteract id\tInteract with a session (Example: interact 1)\nbackground\tReturn to the main console\n"
