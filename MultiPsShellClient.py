@@ -10,9 +10,10 @@ import socket
 import time
 import threading 
 
-version = "1.1"
+version = "1.2"
 buffer_size = 4096
 recv_timeout = 0.2
+logpath = time.strftime("%c") + ".log" 
 
 sessions = {}
 max_session = 20
@@ -70,12 +71,13 @@ class Networking:
 			size -= current_buffer_size
 		return buffer
 
-	def accept_connection(self, s):
+	def accept_connection(self, s, logpath):
 		s.listen(max_session)
 		while True:
 			conn, addr = s.accept()
 			session_id = self.add_new_connection(conn, "Callback from %s:%d" % (addr[0], addr[1]))
 			print "[+] *** NEW Callback from %s:%d. Session ID:%s" % (addr[0], addr[1], session_id)
+			log_command("Callback from %s:%d" % (addr[0], addr[1]), "New Connection", logpath)
 			
 	def add_new_connection(self, conn, data):
 		for key in sessions.keys():
@@ -92,6 +94,9 @@ class NetThread(threading.Thread):
  
     def run(self):
         self._target(*self._args)
+
+def log_command(command, action, path):
+	open(path, "a+").write("\n[%s] %s:\n--------------------------------------------\n%s" % (time.strftime("%c"), action, command))
 		
 def show_help():
 	print "Help\n------\nlist\t\tList all sessions\ninteract id\tInteract with a session (Example: interact 1)\nbackground\tReturn to the main console\n"
@@ -117,7 +122,7 @@ if __name__ == "__main__":
 	print "[+] Setup to receive up to %d clients" % max_session
 	print "[*] Waiting for a connection...\n\n"
 	
-	thread = NetThread(accept_loop, s)
+	thread = NetThread(accept_loop, s, logpath)
 	thread.start()
 
 	try:
@@ -150,6 +155,8 @@ if __name__ == "__main__":
 							else:
 								data = old
 								old = None
+								
+							log_command(data, "Received", logpath)
 							cmd = raw_input(data)
 							
 							if cmd == "background":
@@ -160,6 +167,8 @@ if __name__ == "__main__":
 							else:
 								if cmd == "":
 									cmd = ";"
+								
+								log_command(cmd, "Sending", logpath)
 								cmd = RC4(cmd, rc4_key)
 								cmd = cmd.get_data()
 								conn.send(cmd)

