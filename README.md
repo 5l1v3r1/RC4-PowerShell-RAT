@@ -82,6 +82,10 @@ Supported commands:
 ...
 [*] ReadFile: execution Completed
 
+(10.0.0.153:RINGZER0\mrun1k0d3r):Command >upload https://home.ringzer0team.com/ps.php C:\windows\temp\ps.txt
+[*] DownloadToDisk: Fetching https://home.ringzer0team.com/ps.php
+[*] DownloadToDisk: execution Completed
+
 
 
 ```
