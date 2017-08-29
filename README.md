@@ -42,8 +42,7 @@ Session         Host
 15              Callback from 127.0.0.1:49416
 
 (Main Console)>>> interact 15
-(192.168.238.1:RINGZER0\mrun1k0d3r):Url >null
-(null):Exec >whoami
+(192.168.238.1:RINGZER0\mrun1k0d3r):Command >whoami
 RINGZER0\mrun1k0d3r
 
 (192.168.238.1:RINGZER0\mrun1k0d3r):Url >background
@@ -55,12 +54,7 @@ Session         Host
 (Main Console)>>> interact 15
 RINGZER0\mrun1k0d3r
 
-(192.168.238.1:RINGZER0\mrun1k0d3r):Url >null
-(null):Exec >get-process
-
-Handles  NPM(K)    PM(K)      WS(K) VM(M)   CPU(s)     Id ProcessName
--------  ------    -----      ----- -----   ------     -- -----------
-    147      22     6252      22516   149     0.22   6972 svchost
+(192.168.238.1:RINGZER0\mrun1k0d3r):Command >...
 ```
 
 # Example
